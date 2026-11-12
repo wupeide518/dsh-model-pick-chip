@@ -34,6 +34,19 @@
       ],
       "versions": [
         {
+          "version": "1.1.0",
+          "publishTimestamp": 1794464805,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
+            "commit": "1f438356c0e5dfb89ca9f476a43507eceea9e18c",
+            "path": "plugin"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-rc.1 <0.3.0"
+          }
+        },
+        {
           "version": "1.0.0",
           "publishTimestamp": 1794455933,
           "source": {
