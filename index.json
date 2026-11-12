@@ -1,0 +1,52 @@
+{
+  "format": 1,
+  "title": {
+    "en": "WPD DSH plugin index",
+    "zh": "WPD DSH 插件索引"
+  },
+  "description": {
+    "en": "Personal index of DSH plugins by wupeide518.",
+    "zh": "wupeide518 的 DSH 插件索引。"
+  },
+  "plugins": [
+    {
+      "name": "dsh-model-pick-chip",
+      "title": {
+        "en": "Provider-first model picker",
+        "zh": "供应商优先模型选择器"
+      },
+      "description": {
+        "en": "Replaces the model seat with a provider-first menu: pick a provider at the top, browse its models below, and fine-tune reasoning effort on a draggable scale.",
+        "zh": "把模型选择位换成「供应商优先」结构：顶部切换供应商，下方列该供应商的模型，底部滑条调思考强度。"
+      },
+      "author": "wupeide518",
+      "homepage": "https://github.com/wupeide518/dsh-model-pick-chip",
+      "repository": {
+        "url": "https://github.com/wupeide518/dsh-model-pick-chip",
+        "directory": "plugin"
+      },
+      "keywords": [
+        "model",
+        "provider",
+        "picker",
+        "reasoning",
+        "ui"
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1794455933,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
+            "commit": "8d058147e109b5abf3b7878a856bad60359a4ba4",
+            "path": "plugin"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-rc.1 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}
