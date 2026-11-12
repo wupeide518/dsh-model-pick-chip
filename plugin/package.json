@@ -1,0 +1,45 @@
+{
+  "name": "dsh-model-pick-chip",
+  "version": "1.0.0",
+  "description": "Provider-first model picker: pick the API provider, then its models (ZCode-style), replacing the built-in composer model seat.",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "model-picker",
+    "provider"
+  ],
+  "license": "MIT",
+  "author": "wupeide518",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wupeide518/dsh-model-pick-chip.git",
+    "directory": "plugin"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "engines": {
+    "dsh": ">=0.2.2-rc.1 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-model-selection"
+      ]
+    }
+  }
+}

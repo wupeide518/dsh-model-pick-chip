@@ -1,0 +1,3 @@
+- insert:
+    - id: model-pick-chip
+      name: '@local/model-pick-chip'
