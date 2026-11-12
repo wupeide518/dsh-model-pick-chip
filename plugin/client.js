@@ -387,6 +387,11 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
         }, { keepOpen: true });
       };
 
+      /**
+       * Switching provider also adopts that provider's first model: the panel
+       * is a picker, not a filter, so leaving it on the previous provider's
+       * model would make the switch look like nothing happened.
+       */
       const pickProvider = (group) => {
         hoverOpened.current = false;
         cancelSubmenuTimer();
@@ -394,6 +399,8 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
         setSubmenu(false);
         setQuery('');
         setError(null);
+        const first = (group.models || [])[0];
+        if (first) chooseModel(group, first);
       };
 
       const providerRow = (group) => h('button', {

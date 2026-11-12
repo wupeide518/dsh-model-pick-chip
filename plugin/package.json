@@ -1,6 +1,6 @@
 {
   "name": "dsh-model-pick-chip",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Provider-first model picker: pick the API provider, then its models (ZCode-style), replacing the built-in composer model seat.",
   "keywords": [
     "dsh",
