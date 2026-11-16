@@ -45,45 +45,6 @@
           "engines": {
             "dsh": ">=0.2.2-rc.1 <0.3.0"
           }
-        },
-        {
-          "version": "1.2.0",
-          "publishTimestamp": 1794792456,
-          "source": {
-            "type": "git",
-            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
-            "commit": "5a0470b4838e4709c47b00af9d3cc1146da60bbd",
-            "path": "plugin"
-          },
-          "engines": {
-            "dsh": ">=0.2.2-rc.1 <0.3.0"
-          }
-        },
-        {
-          "version": "1.1.0",
-          "publishTimestamp": 1794464805,
-          "source": {
-            "type": "git",
-            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
-            "commit": "1f438356c0e5dfb89ca9f476a43507eceea9e18c",
-            "path": "plugin"
-          },
-          "engines": {
-            "dsh": ">=0.2.2-rc.1 <0.3.0"
-          }
-        },
-        {
-          "version": "1.0.0",
-          "publishTimestamp": 1794455933,
-          "source": {
-            "type": "git",
-            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
-            "commit": "8d058147e109b5abf3b7878a856bad60359a4ba4",
-            "path": "plugin"
-          },
-          "engines": {
-            "dsh": ">=0.2.2-rc.1 <0.3.0"
-          }
         }
       ]
     }
