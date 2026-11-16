@@ -1,5 +1,5 @@
 /**
- * Host half of @local/model-pick-chip.
+ * Host half of dsh-model-pick-chip.
  *
  * The picker is a pure Client-side replacement of the composer's model seat
  * (`conversation.input.model`): it reads the per-session ModelDirectory that

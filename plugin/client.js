@@ -41,6 +41,15 @@ window.__ModuleLoader__.load({
       loadError: '加载失败：{message}',
       visionBridge: 'modlens 读图模型',
       visionHint: '用 modlens 把图片读成文字再喂给纯文本模型',
+      teamLabel: '启用智能体团队协作',
+      teamInfo: '通过共享任务板协调多个智能体的分工与进度，复杂任务表现更佳，token 开销也相应更高。',
+      teamFailed: '无法确认智能体团队协作设置已保存，请重试：{message}',
+      teamConfirmTitle: '确认停用智能体团队协作？',
+      teamConfirmBody: '对话过程中停用智能体团队协作，将停止共享任务工具和团队协调指令。',
+      teamConfirmWarn: '停用后可能影响缓存复用、增加后续 token 用量与开销，并影响当前任务的协作效果。',
+      teamCancel: '取消',
+      teamDisable: '确认停用',
+      teamUnavailable: '当前 DSH 版本没有提供智能体团队协作接口',
     };
     const en = {
       menuAria: 'Choose a model provider',
@@ -72,6 +81,15 @@ window.__ModuleLoader__.load({
       loadError: 'Load failed: {message}',
       visionBridge: 'modlens vision',
       visionHint: 'Images are read by modlens and passed as text for text-only models',
+      teamLabel: 'Enable agent team collaboration',
+      teamInfo: 'Coordinates several agents through a shared task board — better on complex tasks, with a correspondingly higher token cost.',
+      teamFailed: 'Could not confirm the agent team setting was saved, please retry: {message}',
+      teamConfirmTitle: 'Turn off agent team collaboration?',
+      teamConfirmBody: 'Turning it off mid-conversation stops the shared task tools and the team coordination instructions.',
+      teamConfirmWarn: 'Disabling may affect cache reuse, raise subsequent token usage and cost, and reduce collaboration on the current task.',
+      teamCancel: 'Cancel',
+      teamDisable: 'Turn off',
+      teamUnavailable: 'This DSH build does not expose the agent team API',
     };
 
     const CSS = `
@@ -127,6 +145,28 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
 .mpc-menu-sub.mpc-sub-left{animation-name:mpc-sub-left}
 @keyframes mpc-sub-right{from{opacity:0;transform:translateX(-7px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes mpc-sub-left{from{opacity:0;transform:translateX(7px) scale(.97)}to{opacity:1;transform:none}}
+.mpc-team{display:flex;align-items:center;gap:8px;padding:6px 8px 4px;font-size:13px;line-height:18px}
+.mpc-team-label{flex:1;min-width:0;display:inline-flex;align-items:center;gap:5px;color:var(--dsw-alias-label-primary,#111827)}
+.mpc-team-info{flex:none;display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--dsw-alias-label-tertiary,#9ca3af);cursor:help}
+.mpc-team-info:hover{color:var(--dsw-alias-label-secondary,#6b7280)}
+.mpc-switch{flex:none;position:relative;width:34px;height:20px;padding:0;border:0;border-radius:999px;background:rgba(17,24,39,.18);cursor:pointer;transition:background .18s ease}
+.mpc-switch[aria-checked="true"]{background:var(--dsw-alias-brand-primary,#4d6bfe)}
+.mpc-switch:disabled{cursor:default;opacity:.5}
+.mpc-switch-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.3);transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.mpc-switch[aria-checked="true"] .mpc-switch-knob{transform:translateX(14px)}
+html.dark .mpc-switch,html[data-theme="dark"] .mpc-switch,body.dark .mpc-switch{background:rgba(255,255,255,.24)}
+html.dark .mpc-switch[aria-checked="true"],html[data-theme="dark"] .mpc-switch[aria-checked="true"],body.dark .mpc-switch[aria-checked="true"]{background:var(--dsw-alias-brand-primary,#4d6bfe)}
+.mpc-confirm{margin:4px 2px 2px;padding:9px 10px;border-radius:10px;background:rgba(234,88,12,.08);color:var(--dsw-alias-label-primary,#111827)}
+.mpc-confirm-title{font-size:12.5px;font-weight:600;line-height:18px}
+.mpc-confirm-body{margin-top:4px;color:var(--dsw-alias-label-secondary,#4b5563);font-size:12px;line-height:17px}
+.mpc-confirm-warn{margin-top:4px;color:var(--dsw-alias-label-tertiary,#6b7280);font-size:11.5px;line-height:16px}
+.mpc-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.mpc-btn{padding:4px 10px;border:1px solid rgba(17,24,39,.14);border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:12px;line-height:18px;cursor:pointer}
+.mpc-btn:hover{background:rgba(17,24,39,.06)}
+.mpc-btn[data-primary="true"]{border-color:transparent;background:#111827;color:#fff}
+.mpc-btn[data-primary="true"]:hover{background:#000}
+html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-primary="true"],body.dark .mpc-btn[data-primary="true"]{background:#f3f4f6;color:#111827}
+.mpc-team-error{margin:2px 8px 4px;color:var(--dsw-alias-label-error,#dc2626);font-size:11.5px;line-height:16px}
 `;
 
     function ensureStyle() {
@@ -185,7 +225,7 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
      * the reasoning-effort ladder.
      */
     function Picker(props) {
-      const { locked, available, directory, load, select, resolveText, t } = props;
+      const { locked, available, directory, load, select, resolveText, t, selectTeamMode } = props;
       const state = useSyncExternalStore(
         useCallback((notify) => directory.subscribe(notify), [directory]),
         useCallback(() => directory.getSnapshot(), [directory]),
@@ -195,6 +235,9 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
       const [providerId, setProviderId] = useState(null);
       const [query, setQuery] = useState('');
       const [error, setError] = useState(null);
+      const [teamError, setTeamError] = useState(null);
+      const [teamPending, setTeamPending] = useState(false);
+      const [teamConfirm, setTeamConfirm] = useState(false);
       const [pos, setPos] = useState(null);
       const [subPos, setSubPos] = useState(null);
       const triggerRef = useRef(null);
@@ -206,6 +249,51 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
       const hoverTimer = useRef(null);
       /** True while the flyout is up because of hover, so a following click confirms instead of closing. */
       const hoverOpened = useRef(false);
+
+      /**
+       * Agent-team selection lives in the host's own projections; the built-in
+       * model menu renders it through its `conversation.input.model.options`
+       * child slot, which a shadowing registration cannot re-declare (the slot
+       * core rejects a second declaration of the same child). Read the same
+       * projection and call the same remote so the switch behaves identically.
+       */
+      const useProjection = typeof props.useProjection === 'function' ? props.useProjection : null;
+      const teamMode = useProjection === null ? undefined : useProjection('agentTeam');
+      const modelSelection = useProjection === null ? undefined : useProjection('modelSelection');
+      const useSession = typeof props.useSession === 'function' ? props.useSession : null;
+      const useSessions = typeof props.useSessions === 'function' ? props.useSessions : null;
+      const addressedChild = useSession === null ? false : useSession((snapshot) => snapshot.subagent !== null);
+      const listedChild = useSessions === null ? false : useSessions(
+        (snapshots) => (snapshots && snapshots.byId ? snapshots.byId[props.sessionId]?.origin === 'subagent' : false),
+      );
+      const teamVisible = teamMode !== undefined && teamMode !== null
+        && !addressedChild && !listedChild
+        && typeof selectTeamMode === 'function';
+      const teamOn = teamVisible && teamMode.enabled === true;
+
+      /** Persist the switch; the host answers with the failure text, or null on success. */
+      const applyTeam = (enabled) => {
+        if (teamPending) return;
+        setTeamError(null);
+        setTeamConfirm(false);
+        setTeamPending(true);
+        Promise.resolve(selectTeamMode(enabled)).then((failure) => {
+          if (failure) setTeamError(t('teamFailed', { message: failure }));
+        }, (cause) => {
+          setTeamError(t('teamFailed', { message: String((cause && cause.message) || cause) }));
+        }).then(() => setTeamPending(false));
+      };
+      /** Turning the team off mid-conversation asks first, exactly like the built-in menu. */
+      const toggleTeam = (next) => {
+        if (teamPending) return;
+        const used = modelSelection !== undefined && modelSelection !== null && modelSelection.lastUsed !== null
+          && modelSelection.lastUsed !== undefined;
+        if (next === false && used) {
+          setTeamConfirm(true);
+          return;
+        }
+        applyTeam(next);
+      };
 
       const scheduleSubmenu = (next, delay) => {
         if (hoverTimer.current) clearTimeout(hoverTimer.current);
@@ -507,6 +595,45 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
       })),
       h('span', { className: 'mpc-bar-knob', style: { left: ratio * 100 + '%' } })));
 
+      /**
+       * The agent-team switch, mirroring the built-in menu's footer row: label,
+       * an info affordance for the longer explanation, then the toggle.
+       */
+      const teamRow = teamVisible ? h('div', { className: 'mpc-team' },
+        h('span', { className: 'mpc-team-label' },
+          h('span', null, t('teamLabel')),
+          h('button', {
+            type: 'button',
+            className: 'mpc-team-info',
+            title: t('teamInfo'),
+            'aria-label': t('teamInfo'),
+            onClick: (event) => event.preventDefault(),
+          }, h('svg', { width: 11, height: 11, viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': true },
+            h('circle', { cx: 8, cy: 8, r: 6.4, stroke: 'currentColor', strokeWidth: 1.3 }),
+            h('path', { d: 'M8 7.2v4', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' }),
+            h('circle', { cx: 8, cy: 4.9, r: 0.85, fill: 'currentColor' })))),
+        h('button', {
+          type: 'button',
+          role: 'switch',
+          className: 'mpc-switch',
+          'aria-checked': teamOn ? 'true' : 'false',
+          'aria-label': t('teamLabel'),
+          disabled: locked === true || teamPending,
+          onClick: () => toggleTeam(!teamOn),
+        }, h('span', { className: 'mpc-switch-knob' })))
+        : null;
+
+      const teamConfirmBox = teamVisible && teamConfirm ? h('div', { className: 'mpc-confirm' },
+        h('div', { className: 'mpc-confirm-title' }, t('teamConfirmTitle')),
+        h('div', { className: 'mpc-confirm-body' }, t('teamConfirmBody')),
+        h('div', { className: 'mpc-confirm-warn' }, t('teamConfirmWarn')),
+        h('div', { className: 'mpc-confirm-actions' },
+          h('button', { type: 'button', className: 'mpc-btn', onClick: () => setTeamConfirm(false) }, t('teamCancel')),
+          h('button', { type: 'button', className: 'mpc-btn', 'data-primary': 'true', onClick: () => applyTeam(false) }, t('teamDisable'))))
+        : null;
+
+      const teamNote = teamVisible && teamError ? h('div', { className: 'mpc-team-error' }, teamError) : null;
+
       const panel = [
         error ? h('div', { key: 'err', className: 'mpc-error' }, error) : null,
         h('div', { key: 'head' }, headRow),
@@ -543,6 +670,10 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
           })),
         effortBar ? h('div', { key: 'sep', className: 'mpc-sep' }) : null,
         effortBar,
+        teamRow ? h('div', { key: 'tsep', className: 'mpc-sep' }) : null,
+        teamRow,
+        teamConfirmBox,
+        teamNote,
       ];
 
       const providerMenu = [
@@ -617,6 +748,27 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
           if (!vars) return text;
           return text.replace(/\{(\w+)\}/g, (match, name) => (vars[name] === undefined ? match : String(vars[name])));
         };
+        /**
+         * The agent-team remote face is owned by `@deepseek-ai/dsh-client-ui-agent-team`;
+         * wait for it instead of requiring it, so this plugin also loads on
+         * builds where the experimental feature is absent.
+         */
+        let agentTeams = null;
+        ctx.inject(['remote', 'remote.agentTeams'], (scope) => {
+          agentTeams = scope.remote.agentTeams;
+          return () => { agentTeams = null; };
+        });
+        const saveTeamMode = (sessionId, enabled) => {
+          if (!agentTeams || typeof agentTeams.setEnabled !== 'function') {
+            return Promise.resolve(t('teamUnavailable'));
+          }
+          return Promise.resolve(agentTeams.setEnabled(sessionId, enabled)).then(
+            (result) => (result && result.ok === false
+              ? (result.error && result.error.message) || String(result.error && result.error.code) || 'error'
+              : null),
+            (cause) => String((cause && cause.message) || cause),
+          );
+        };
         ctx.inject(['slots', 'sessions', 'modelDirectories'], (scope) => {
           const models = scope.modelDirectories;
           const sessions = scope.sessions;
@@ -641,6 +793,7 @@ html.dark .mpc-menu,html[data-theme="dark"] .mpc-menu,body.dark .mpc-menu{backgr
                 },
                 resolveText: (text) => (ctx.locale && typeof ctx.locale.resolveText === 'function' ? ctx.locale.resolveText(text) : text),
                 select: (selection) => (available ? directory.select(selection) : Promise.resolve(undefined)),
+                selectTeamMode: (enabled) => saveTeamMode(sessionId, enabled),
               };
             },
           }, Bound));
