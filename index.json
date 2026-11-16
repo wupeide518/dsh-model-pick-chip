@@ -16,8 +16,8 @@
         "zh": "供应商优先模型选择器"
       },
       "description": {
-        "en": "Replaces the model seat with a provider-first menu: pick a provider at the top, browse its models below, and fine-tune reasoning effort on a draggable scale.",
-        "zh": "把模型选择位换成「供应商优先」结构：顶部切换供应商，下方列该供应商的模型，底部滑条调思考强度。"
+        "en": "Replaces the model seat with a provider-first menu: pick a provider at the top, browse its models below, fine-tune reasoning effort on a draggable scale, and toggle agent-team collaboration like the built-in menu.",
+        "zh": "把模型选择位换成「供应商优先」结构：顶部切换供应商，下方列该供应商的模型，底部滑条调思考强度，并保留「启用智能体团队协作」开关。"
       },
       "author": "wupeide518",
       "homepage": "https://github.com/wupeide518/dsh-model-pick-chip",
@@ -33,6 +33,19 @@
         "ui"
       ],
       "versions": [
+        {
+          "version": "1.3.0",
+          "publishTimestamp": 1794799374,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/wupeide518/dsh-model-pick-chip",
+            "commit": "af5e36ab02c74b96c306d1909f08dcd1c663b974",
+            "path": "plugin"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-rc.1 <0.3.0"
+          }
+        },
         {
           "version": "1.2.0",
           "publishTimestamp": 1794792456,
