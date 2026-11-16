@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-  id: '@local/model-pick-chip',
+  id: 'dsh-model-pick-chip',
   factory(require) {
     const React = require('react');
     const ReactDOM = require('react-dom');
