@@ -50,6 +50,18 @@ window.__ModuleLoader__.load({
       teamCancel: '取消',
       teamDisable: '确认停用',
       teamUnavailable: '当前 DSH 版本没有提供智能体团队协作接口',
+      balTitle: 'DeepSeek 余额',
+      balAvailable: '可用余额',
+      balBonus: '赠送额度',
+      balFailed: '余额不可用',
+      balRefresh: '重新查询',
+      balTopUp: '去充值',
+      balUpdated: '更新于 {time}',
+      balReasonNoRemote: '这个 DSH 版本没有暴露余额接口（remote.account 未挂载）',
+      balReasonSignedOut: '账号未登录，或登录授权已过期，余额接口返回空',
+      balReasonEmpty: '账号里还没有可显示的余额',
+      balReasonFailed: '平台没有返回余额（请求失败或超时）',
+      balReasonError: '调用出错：{message}',
     };
     const en = {
       menuAria: 'Choose a model provider',
@@ -90,6 +102,18 @@ window.__ModuleLoader__.load({
       teamCancel: 'Cancel',
       teamDisable: 'Turn off',
       teamUnavailable: 'This DSH build does not expose the agent team API',
+      balTitle: 'DeepSeek balance',
+      balAvailable: 'Available',
+      balBonus: 'Bonus credit',
+      balFailed: 'Balance unavailable',
+      balRefresh: 'Refresh',
+      balTopUp: 'Top up',
+      balUpdated: 'Updated {time}',
+      balReasonNoRemote: 'This DSH build exposes no balance API (remote.account is not mounted)',
+      balReasonSignedOut: 'Signed out or the grant expired — the balance API returned nothing',
+      balReasonEmpty: 'The account has no balance to show yet',
+      balReasonFailed: 'The platform did not return a balance (request failed or timed out)',
+      balReasonError: 'Call failed: {message}',
     };
 
     const CSS = `
@@ -167,6 +191,36 @@ html.dark .mpc-switch[aria-checked="true"],html[data-theme="dark"] .mpc-switch[a
 .mpc-btn[data-primary="true"]:hover{background:#000}
 html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-primary="true"],body.dark .mpc-btn[data-primary="true"]{background:#f3f4f6;color:#111827}
 .mpc-team-error{margin:2px 8px 4px;color:var(--dsw-alias-label-error,#dc2626);font-size:11.5px;line-height:16px}
+.mpc-head{display:flex;align-items:center;gap:4px;width:100%}
+.mpc-head-main{flex:1;min-width:0;display:flex}
+.mpc-head:hover{background:rgba(17,24,39,.055)}
+.mpc-head[data-open="true"]{background:rgba(17,24,39,.07)}
+.mpc-head .mpc-head-row:hover,.mpc-head .mpc-head-row[aria-expanded="true"]{background:transparent}
+.mpc-head[data-open="true"] .mpc-chev{transform:rotate(90deg)}
+.mpc-bal{flex:none;display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border:0;border-radius:999px;background:rgba(17,24,39,.06);color:var(--dsw-alias-label-secondary,#4b5563);font:inherit;font-size:11px;line-height:16px;font-variant-numeric:tabular-nums;cursor:pointer}
+.mpc-bal:hover{background:rgba(17,24,39,.11)}
+.mpc-bal[data-state="low"]{background:rgba(234,88,12,.11);color:#b45309}
+.mpc-bal[data-state="failed"]{padding:1px 6px;border:1px dashed rgba(17,24,39,.22);background:transparent;color:var(--dsw-alias-label-tertiary,#9ca3af);cursor:default}
+.mpc-bal[data-state="loading"]{color:var(--dsw-alias-label-tertiary,#9ca3af);cursor:default}
+.mpc-bal-inline{margin-left:auto;padding-right:2px;color:var(--dsw-alias-label-secondary,#6b7280);font-size:11px;line-height:16px;font-variant-numeric:tabular-nums}
+.mpc-card{position:fixed;z-index:96;width:250px;padding:11px 12px;border-radius:12px;border:1px solid rgba(17,24,39,.08);background:#fff;color:var(--dsw-alias-label-primary,#111827);box-shadow:0 16px 40px rgba(15,23,42,.18),0 2px 8px rgba(15,23,42,.06);animation:mpc-card-in .15s cubic-bezier(.2,.8,.2,1)}
+@keyframes mpc-card-in{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+.mpc-card-head{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--dsw-alias-label-tertiary,#6b7280)}
+.mpc-card-main{margin-top:5px;font-size:20px;font-weight:600;line-height:26px;font-variant-numeric:tabular-nums}
+.mpc-card-rows{margin-top:5px;display:grid;gap:3px;font-size:12px;line-height:17px;color:var(--dsw-alias-label-secondary,#4b5563)}
+.mpc-card-row{display:flex;justify-content:space-between;gap:10px}
+.mpc-card-row b{font-weight:600;color:var(--dsw-alias-label-primary,#111827);font-variant-numeric:tabular-nums}
+.mpc-card-foot{display:flex;align-items:center;gap:8px;margin-top:9px;padding-top:8px;border-top:1px solid rgba(17,24,39,.08)}
+.mpc-card-time{flex:1;color:var(--dsw-alias-label-tertiary,#9ca3af);font-size:11px}
+.mpc-card-note{margin-top:6px;color:var(--dsw-alias-label-tertiary,#6b7280);font-size:11px;line-height:1.5}
+.mpc-card-link{color:var(--dsw-alias-brand-primary,#4d6bfe);font-size:12px;text-decoration:none}
+.mpc-card-link:hover{text-decoration:underline}
+.mpc-card-btn{padding:2px 8px;border:1px solid rgba(17,24,39,.14);border-radius:7px;background:transparent;color:inherit;font:inherit;font-size:11.5px;line-height:16px;cursor:pointer}
+.mpc-card-btn:hover{background:rgba(17,24,39,.06)}
+html.dark .mpc-bal,html[data-theme="dark"] .mpc-bal,body.dark .mpc-bal{background:rgba(255,255,255,.1);color:rgba(255,255,255,.78)}
+html.dark .mpc-bal[data-state="low"],html[data-theme="dark"] .mpc-bal[data-state="low"],body.dark .mpc-bal[data-state="low"]{background:rgba(234,88,12,.22);color:#fdba74}
+html.dark .mpc-card,html[data-theme="dark"] .mpc-card,body.dark .mpc-card{background:#2b2c31;border-color:rgba(255,255,255,.1)}
+html.dark .mpc-card-row b,html[data-theme="dark"] .mpc-card-row b,body.dark .mpc-card-row b{color:#f3f4f6}
 `;
 
     function ensureStyle() {
@@ -218,6 +272,85 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
     const isVisionGroup = (group) => /modlens/i.test(String(group.id)) || VISION_SUFFIX.test(String(group.label || group.name || '')) || VISION_SUFFIX.test(String(group.name || ''));
     const stripVisionSuffix = (text) => String(text || '').replace(VISION_SUFFIX, '');
 
+    /** Where the balance card's "去充值" link goes when the host exposes no link. */
+    const TOP_UP_URL = 'https://platform.deepseek.com/top_up';
+
+    /** Host channel served by this package's `index.js`. */
+    const BALANCE_CHANNEL = '/mpc';
+
+    /**
+     * Remembering what a provider was left on is what makes a provider switch
+     * cost one click instead of three. Kept in `localStorage` because the menu
+     * is mounted per session and the choice outlives both the panel and the tab.
+     */
+    const RECENT_KEY = 'model-pick.recent';
+
+    function readRecent() {
+      try {
+        if (typeof window === 'undefined') return {};
+        const raw = window.localStorage.getItem(RECENT_KEY);
+        const parsed = raw === null ? null : JSON.parse(raw);
+        return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function writeRecent(value) {
+      try {
+        if (typeof window === 'undefined') return;
+        window.localStorage.setItem(RECENT_KEY, JSON.stringify(value));
+      } catch (error) {
+        // Private mode or a full quota: remembering is a convenience, not state.
+      }
+    }
+
+    const recentChoices = readRecent();
+
+    /** `¥ 128.40` / `-¥ 1.22` — grouped thousands, always two decimals, sign outside the symbol. */
+    function moneyText(amount, currency) {
+      const symbol = String(currency || '').toUpperCase() === 'USD' ? '$' : '¥';
+      const value = Number(amount);
+      if (!Number.isFinite(value)) return symbol + ' —';
+      const parts = Math.abs(value).toFixed(2).split('.');
+      const sign = value < 0 ? '-' : '';
+      return sign + symbol + ' ' + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
+    }
+
+    /** Wallets arrive per currency; prefer CNY, otherwise take whatever came first. */
+    function walletOf(list) {
+      const items = Array.isArray(list) ? list : [];
+      return items.find((wallet) => String((wallet && wallet.currency) || '').toUpperCase() === 'CNY') || items[0] || null;
+    }
+
+    /**
+     * Flatten the `remote.account.getBalance` envelope into the few fields the
+     * card renders. The host answers null when signed out and `failed` when the
+     * platform call did not land, so keep the reason: "unavailable" alone leaves
+     * no way to tell a missing remote from an expired grant.
+     */
+    function readBalance(envelope) {
+      if (!envelope || envelope.ok !== true) {
+        return {
+          status: 'failed',
+          reason: (envelope && envelope.reason) || 'unknown',
+          message: (envelope && envelope.message) || '',
+        };
+      }
+      const result = envelope.value;
+      if (!result || result.status !== 'ready') return { status: 'failed', reason: 'failed' };
+      const main = walletOf(result.value);
+      if (!main) return { status: 'failed', reason: 'empty' };
+      const bonus = walletOf(result.bonusWallets);
+      return {
+        status: 'ready',
+        currency: main.currency,
+        available: main.balance,
+        bonus: bonus ? bonus.balance : null,
+        at: Date.now(),
+      };
+    }
+
     /**
      * ZCode-style layout: a single panel whose top row is the provider
      * selector (clicking it opens the provider list in a flyout beside the
@@ -225,7 +358,7 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
      * the reasoning-effort ladder.
      */
     function Picker(props) {
-      const { locked, available, directory, load, select, resolveText, t, selectTeamMode } = props;
+      const { locked, available, directory, load, select, resolveText, t, selectTeamMode, loadBalance } = props;
       const state = useSyncExternalStore(
         useCallback((notify) => directory.subscribe(notify), [directory]),
         useCallback(() => directory.getSnapshot(), [directory]),
@@ -240,13 +373,20 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
       const [teamConfirm, setTeamConfirm] = useState(false);
       const [pos, setPos] = useState(null);
       const [subPos, setSubPos] = useState(null);
+      const [bal, setBal] = useState(null);
+      const [balOpen, setBalOpen] = useState(false);
+      const [balPinned, setBalPinned] = useState(false);
+      const [balPos, setBalPos] = useState(null);
       const triggerRef = useRef(null);
       const menuRef = useRef(null);
       const subRef = useRef(null);
       const headRef = useRef(null);
       const searchRef = useRef(null);
-      /** Hover intent timer: keeps a quick pass over the header from flashing the flyout. */
+      const balRef = useRef(null);
+      const cardRef = useRef(null);
+      /** Hover timers: the flyout and the balance card both open on intent, not on contact. */
       const hoverTimer = useRef(null);
+      const balTimer = useRef(null);
       /** True while the flyout is up because of hover, so a following click confirms instead of closing. */
       const hoverOpened = useRef(false);
 
@@ -346,6 +486,60 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
       const shownModels = viewed ? filterModels(viewed.models, query) : [];
       const monogram = (group) => String(group?.label || '?').trim().slice(0, 1);
 
+      /**
+       * The wallet API belongs to the DeepSeek account provider only, so the
+       * pill appears there and nowhere else rather than leaving an empty slot
+       * next to providers that can never answer.
+       */
+      const balanceOn = open && viewed !== null && viewed.id === 'deepseek-account' && typeof loadBalance === 'function';
+      const balanceText = bal && bal.status === 'ready' ? moneyText(bal.available, bal.currency) : null;
+      const balState = bal === null || bal.status === 'loading'
+        ? 'loading'
+        : bal.status === 'ready'
+          ? (Number(bal.available) < 20 ? 'low' : 'ready')
+          : 'failed';
+      /** Spelled-out cause under the failed headline, so the fix is obvious. */
+      const balReason = bal === null || bal.status !== 'failed'
+        ? ''
+        : bal.reason === 'no-remote'
+          ? t('balReasonNoRemote')
+          : bal.reason === 'signed-out'
+            ? t('balReasonSignedOut')
+            : bal.reason === 'empty'
+              ? t('balReasonEmpty')
+              : bal.reason === 'error'
+                ? t('balReasonError', { message: bal.message || '' })
+                : t('balReasonFailed');
+
+      const requestBalance = (force) => {
+        if (typeof loadBalance !== 'function') return;
+        setBal((prev) => (force || prev === null ? { status: 'loading' } : prev));
+        Promise.resolve(loadBalance(force === true)).then(
+          (result) => setBal(readBalance(result)),
+          () => setBal({ status: 'failed' }),
+        );
+      };
+      /** Hover opens the card after 300ms; leaving it keeps a pinned card up. */
+      const scheduleBalance = (next, delay) => {
+        if (balTimer.current) clearTimeout(balTimer.current);
+        balTimer.current = setTimeout(() => {
+          balTimer.current = null;
+          if (next) {
+            setBalOpen(true);
+            return;
+          }
+          if (!balPinned) setBalOpen(false);
+        }, delay);
+      };
+      const toggleBalance = () => {
+        if (balTimer.current) clearTimeout(balTimer.current);
+        balTimer.current = null;
+        const next = !balOpen;
+        setBalOpen(next);
+        setBalPinned(next);
+        if (next) requestBalance(false);
+      };
+
       /** Place the panel above the trigger, right-aligned. */
       useLayoutEffect(() => {
         if (!open) {
@@ -398,11 +592,17 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
           if (triggerRef.current?.contains(event.target) === true) return;
           if (menuRef.current?.contains(event.target) === true) return;
           if (subRef.current?.contains(event.target) === true) return;
+          if (cardRef.current?.contains(event.target) === true) return;
           setOpen(false);
         };
         const onKey = (event) => {
           if (event.key !== 'Escape') return;
           event.stopPropagation();
+          if (balOpen) {
+            setBalOpen(false);
+            setBalPinned(false);
+            return;
+          }
           if (submenu) {
             setSubmenu(false);
             return;
@@ -415,14 +615,45 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
           document.removeEventListener('mousedown', onDown);
           document.removeEventListener('keydown', onKey);
         };
-      }, [open, submenu]);
+      }, [open, submenu, balOpen]);
 
       useEffect(() => {
         if (open) load();
       }, [open]);
 
+      /** Fetch the balance once per panel opening; the host caches it for a minute. */
+      useEffect(() => {
+        if (!open) {
+          setBalOpen(false);
+          setBalPinned(false);
+          return;
+        }
+        if (viewed !== null && viewed.id === 'deepseek-account' && bal === null) requestBalance(false);
+      }, [open, viewed === null ? null : viewed.id]);
+
+      /** Anchor the balance card under the pill, clamped into the viewport. */
+      useLayoutEffect(() => {
+        if (!balOpen) {
+          setBalPos(null);
+          return undefined;
+        }
+        const place = () => {
+          const node = balRef.current;
+          if (!node) return;
+          const rect = node.getBoundingClientRect();
+          const width = 250;
+          const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8));
+          const top = Math.min(rect.bottom + 6, Math.max(8, window.innerHeight - 200));
+          setBalPos({ left, top });
+        };
+        place();
+        window.addEventListener('resize', place);
+        return () => window.removeEventListener('resize', place);
+      }, [balOpen, bal]);
+
       useEffect(() => () => {
         if (hoverTimer.current) clearTimeout(hoverTimer.current);
+        if (balTimer.current) clearTimeout(balTimer.current);
       }, []);
 
       const openMenu = () => {
@@ -448,6 +679,13 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
             setError(t('switchFailed', { message: result.error.message || result.error.code || 'error' }));
             return;
           }
+          if (selection && typeof selection.provider === 'string' && typeof selection.model === 'string') {
+            recentChoices[selection.provider] = {
+              model: selection.model,
+              effort: selection.reasoningEffort === undefined ? null : selection.reasoningEffort,
+            };
+            writeRecent(recentChoices);
+          }
           if (keepOpen) return;
           setOpen(false);
           setSubmenu(false);
@@ -456,12 +694,20 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
         });
       };
 
-      const chooseModel = (group, model) => {
-        if (current?.provider === group.id && current?.model === model.id) return;
+      /** `effort` overrides the model's default when a provider remembers one. */
+      const chooseModel = (group, model, effort) => {
+        const same = current?.provider === group.id && current?.model === model.id;
+        if (same) {
+          if (effort !== undefined && effort !== effectiveEffort) {
+            choose({ provider: group.id, model: model.id, reasoningEffort: effort }, { keepOpen: true });
+          }
+          return;
+        }
+        const next = effort === undefined ? model.reasoning?.defaultEffort : effort;
         choose({
           provider: group.id,
           model: model.id,
-          ...(model.reasoning?.defaultEffort === undefined ? {} : { reasoningEffort: model.reasoning.defaultEffort }),
+          ...(next === undefined ? {} : { reasoningEffort: next }),
         }, { keepOpen: true });
       };
 
@@ -476,8 +722,9 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
       };
 
       /**
-       * Switching provider also adopts that provider's first model: the panel
-       * is a picker, not a filter, so leaving it on the previous provider's
+       * Switching provider resumes what that provider was left on: same model and
+       * strength when it still exists, otherwise the provider's first model. The
+       * panel is a picker, not a filter, so leaving it on the previous provider's
        * model would make the switch look like nothing happened.
        */
       const pickProvider = (group) => {
@@ -487,8 +734,16 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
         setSubmenu(false);
         setQuery('');
         setError(null);
-        const first = (group.models || [])[0];
-        if (first) chooseModel(group, first);
+        const models = group.models || [];
+        const remembered = recentChoices[group.id];
+        const target = (remembered ? models.find((model) => model.id === remembered.model) : undefined) || models[0];
+        if (!target) return;
+        const efforts = (target.reasoning && target.reasoning.efforts) || [];
+        const effort = remembered && remembered.model === target.id && remembered.effort
+          && efforts.some((item) => item.id === remembered.effort)
+          ? remembered.effort
+          : undefined;
+        chooseModel(group, target, effort);
       };
 
       const providerRow = (group) => h('button', {
@@ -503,6 +758,7 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
       h('span', { className: 'mpc-mono' }, monogram(group)),
       h('span', { className: 'mpc-name' }, stripVisionSuffix(group.label)),
       isVisionGroup(group) ? h('span', { className: 'mpc-tag' }, 'modlens') : null,
+      group.id === 'deepseek-account' && balanceText ? h('span', { className: 'mpc-bal-inline' }, balanceText) : null,
       current?.provider === group.id ? h(Check) : null);
 
       const failureRows = failures.map((failure) => h('button', {
@@ -544,8 +800,31 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
       },
       h('span', { className: 'mpc-mono' }, viewed ? monogram(viewed) : '·'),
       h('span', { className: 'mpc-name' }, viewed ? stripVisionSuffix(viewed.label) : t('select')),
-      viewedVision ? h('span', { className: 'mpc-tag' }, 'modlens') : null,
-      h(ChevRight));
+      viewedVision ? h('span', { className: 'mpc-tag' }, 'modlens') : null);
+
+      /**
+       * The header is a group, not one button: the balance pill is interactive
+       * on its own, and nesting a button inside a button is invalid markup that
+       * React would also complain about.
+       */
+      const balancePill = balanceOn ? h('button', {
+        ref: balRef,
+        type: 'button',
+        className: 'mpc-bal',
+        'data-state': balState,
+        'aria-haspopup': 'dialog',
+        'aria-expanded': balOpen ? 'true' : 'false',
+        title: t('balTitle'),
+        onMouseEnter: () => scheduleBalance(true, 300),
+        onMouseLeave: () => scheduleBalance(false, 200),
+        onClick: toggleBalance,
+      },
+      balState === 'failed' ? t('balFailed') : balState === 'loading' ? '···' : balanceText) : null;
+
+      const headGroup = h('div', { className: 'mpc-head', 'data-open': submenu ? 'true' : 'false' },
+        h('div', { className: 'mpc-head-main' }, headRow),
+        balancePill,
+        h(ChevRight));
 
       const ratio = levels.length > 1 && levelIndex >= 0 ? levelIndex / (levels.length - 1) : (levelIndex >= 0 ? 1 : 0);
       const pickEffortAt = (event) => {
@@ -636,7 +915,7 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
 
       const panel = [
         error ? h('div', { key: 'err', className: 'mpc-error' }, error) : null,
-        h('div', { key: 'head' }, headRow),
+        h('div', { key: 'head' }, headGroup),
         h('div', { key: 'sect', className: 'mpc-sect' }, t('modelsTitle')),
         viewed && viewed.models.length > 4
           ? h('input', {
@@ -717,6 +996,54 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
           document.body)
         : null;
 
+      const balanceCard = balOpen && balanceOn ? ReactDOM.createPortal(
+        h('div', {
+          ref: cardRef,
+          className: 'mpc-card',
+          role: 'dialog',
+          'aria-label': t('balTitle'),
+          style: balPos ? { left: balPos.left, top: balPos.top } : { visibility: 'hidden', left: 0, top: 0 },
+          onMouseEnter: () => {
+            if (balTimer.current) clearTimeout(balTimer.current);
+            balTimer.current = null;
+          },
+          onMouseLeave: () => scheduleBalance(false, 200),
+        },
+        h('div', { className: 'mpc-card-head' }, h('span', null, t('balTitle'))),
+        bal !== null && bal.status === 'ready'
+          ? h(React.Fragment, null,
+            h('div', { className: 'mpc-card-main' }, moneyText(bal.available, bal.currency)),
+            h('div', { className: 'mpc-card-rows' },
+              h('div', { className: 'mpc-card-row' },
+                h('span', null, t('balAvailable')),
+                h('b', null, moneyText(bal.available, bal.currency))),
+              bal.bonus === null || bal.bonus === undefined
+                ? null
+                : h('div', { className: 'mpc-card-row' },
+                  h('span', null, t('balBonus')),
+                  h('b', null, moneyText(bal.bonus, bal.currency)))),
+            h('div', { className: 'mpc-card-foot' },
+              h('span', { className: 'mpc-card-time' },
+                bal.at ? t('balUpdated', { time: new Date(bal.at).toTimeString().slice(0, 5) }) : ''),
+              h('button', {
+                type: 'button',
+                className: 'mpc-card-btn',
+                onClick: () => requestBalance(true),
+              }, t('balRefresh')),
+              h('a', {
+                className: 'mpc-card-link',
+                href: TOP_UP_URL,
+                target: '_blank',
+                rel: 'noreferrer noopener',
+                onClick: (event) => event.stopPropagation(),
+              }, t('balTopUp'))))
+          : h(React.Fragment, null,
+            h('div', { className: 'mpc-card-main', style: { fontSize: 14, fontWeight: 500 } },
+              bal !== null && bal.status === 'failed' ? t('balFailed') : t('loading')),
+            balReason ? h('div', { className: 'mpc-card-note' }, balReason) : null)),
+        document.body)
+        : null;
+
       return h(React.Fragment, null,
         h('button', {
           ref: triggerRef,
@@ -733,7 +1060,8 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
         effortLabel ? h('span', { className: 'mpc-trigger-effort' }, effortLabel) : null,
         h(ChevDown)),
         menu,
-        flyout);
+        flyout,
+        balanceCard);
     }
 
     return {
@@ -758,6 +1086,81 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
           agentTeams = scope.remote.agentTeams;
           return () => { agentTeams = null; };
         });
+        /**
+         * `@deepseek-ai/dsh-deepseek-account` owns the wallet endpoint and
+         * resolves the stored sign-in grant itself, so the balance needs no
+         * host code here — only this remote face, which is absent on builds
+         * without the account provider.
+         */
+        let account = null;
+        ctx.inject(['remote', 'remote.account'], (scope) => {
+          account = scope.remote.account;
+          return () => { account = null; };
+        });
+        /**
+         * Preferred path: this plugin's own Host channel (`index.js`). The
+         * account remote answers `failed` on some machines because the platform
+         * only serves the wallet to requests carrying the desktop client
+         * headers; the Host half adds them and reports the real cause. The
+         * remote stays as the fallback for hosts that never mounted the channel.
+         */
+        let connection = null;
+        ctx.inject(['connection'], (scope) => {
+          connection = scope.connection;
+          return () => { connection = null; };
+        });
+        /** Host-side cache: the wallet endpoint is rate limited, the card is not. */
+        let balanceCache = { at: 0, envelope: null };
+        /**
+         * Returns `{ok:true, value}` or `{ok:false, reason}` so the card can say
+         * why it has no number: `no-remote` (this build exposes no account
+         * namespace), `signed-out` (the host answered null), `failed` (the
+         * platform call was rejected) or `error` (the transport threw).
+         */
+        const loadBalance = (force) => {
+          if (!force && balanceCache.envelope !== null && Date.now() - balanceCache.at < 60000) {
+            return Promise.resolve(balanceCache.envelope);
+          }
+          /** Own Host channel first: it adds the headers the wallet endpoint requires. */
+          const viaHost = () => {
+            if (connection === null || typeof connection !== 'object') return null;
+            const rpc = connection.rpc;
+            if (rpc === null || typeof rpc !== 'object' || typeof rpc.call !== 'function') return null;
+            return Promise.resolve(rpc.call(BALANCE_CHANNEL, 'balance', {})).then((result) => {
+              if (result !== null && typeof result === 'object' && result.ok === true) {
+                return { ok: true, value: result.value };
+              }
+              const details = result !== null && typeof result === 'object' && result.error ? result.error.details : null;
+              const reason = details && typeof details === 'object' ? details.reason : null;
+              return { ok: false, reason: reason === 'signed-out' ? 'signed-out' : reason === 'error' ? 'error' : 'failed' };
+            }, () => null); // unmounted channel: fall through to the account remote
+          };
+          const viaRemote = (retries) => {
+            if (account === null || typeof account.getBalance !== 'function') {
+              return Promise.resolve({ ok: false, reason: 'no-remote' });
+            }
+            return Promise.resolve(account.getBalance({
+              version: '0.2.2-rc.3',
+              locale: 'zh-CN',
+              timezoneOffsetSeconds: -new Date().getTimezoneOffset() * 60,
+            })).then((result) => {
+              if (result === null) return { ok: false, reason: 'signed-out' };
+              if (result && result.status === 'ready') return { ok: true, value: result };
+              // One retry: the platform occasionally answers late on the first call of a
+              // session, and a second attempt usually lands before we show a failure.
+              if (retries > 0) return new Promise((done) => setTimeout(done, 700)).then(() => viaRemote(retries - 1));
+              return { ok: false, reason: 'failed' };
+            }, (cause) => (retries > 0
+              ? new Promise((done) => setTimeout(done, 700)).then(() => viaRemote(retries - 1))
+              : { ok: false, reason: 'error', message: String((cause && cause.message) || cause) }));
+          };
+          const host = viaHost();
+          const pending = host === null ? viaRemote(1) : host.then((answer) => (answer === null ? viaRemote(1) : answer));
+          return pending.then((envelope) => {
+            balanceCache = { at: Date.now(), envelope };
+            return envelope;
+          });
+        };
         const saveTeamMode = (sessionId, enabled) => {
           if (!agentTeams || typeof agentTeams.setEnabled !== 'function') {
             return Promise.resolve(t('teamUnavailable'));
@@ -794,6 +1197,7 @@ html.dark .mpc-btn[data-primary="true"],html[data-theme="dark"] .mpc-btn[data-pr
                 resolveText: (text) => (ctx.locale && typeof ctx.locale.resolveText === 'function' ? ctx.locale.resolveText(text) : text),
                 select: (selection) => (available ? directory.select(selection) : Promise.resolve(undefined)),
                 selectTeamMode: (enabled) => saveTeamMode(sessionId, enabled),
+                loadBalance: (force) => loadBalance(force),
               };
             },
           }, Bound));
